@@ -9,24 +9,36 @@ A beautiful, responsive web application for learning with flashcards using space
 - **Interactive Flashcards**: Flip cards with 3D animations to reveal answers
 - **Mobile Gestures**: Swipe left/right on mobile to mark cards as known/unknown
 - **Keyboard Navigation**: Use keyboard shortcuts for accessibility
+- **Micro-Interactions**: Delightful animations enhance the learning experience
 
 ### Spaced Repetition System
 
 - **Smart Algorithm**: Cards you struggle with appear more frequently
 - **Retention Optimization**: Spacing effect maximizes long-term memory
 - **Progress Tracking**: Detailed stats on your learning journey
+- **Edge Case Handling**: Elegant handling of empty states and completion messages
 
 ### User Interface
 
 - **Modern Design**: Clean, distraction-free interface with glassmorphism effects
 - **Dark/Light Mode**: Toggle between themes with smooth transitions
 - **Fully Responsive**: Works beautifully on all devices
+- **Interactive Tour**: Guided onboarding experience for new users
 
 ### Data Management
 
 - **Local Storage**: All data is saved in your browser
 - **Import/Export**: Backup and transfer your cards between devices
 - **Card Management**: Create, edit, and organize your flashcards
+- **Data Validation**: Robust error handling for importing flashcard data
+- **Offline Support**: Progressive Web App (PWA) functionality for learning without internet
+
+### Accessibility
+
+- **ARIA Attributes**: Enhanced screen reader support
+- **Keyboard Navigation**: Complete control without a mouse
+- **Focus Management**: Clear visual indicators for keyboard users
+- **High Contrast**: Readable text with sufficient color contrast
 
 ## Technology Stack
 
@@ -35,6 +47,8 @@ A beautiful, responsive web application for learning with flashcards using space
 - **Framer Motion**: For smooth animations and transitions
 - **React Router**: For navigation between pages
 - **Recharts**: For data visualization in the dashboard
+- **React Joyride**: For guided tours and onboarding
+- **Service Workers**: For offline functionality (PWA)
 
 ## Getting Started
 
@@ -66,6 +80,16 @@ A beautiful, responsive web application for learning with flashcards using space
 2. **Study**: Go to the Study page to review cards due for review
 3. **Track Progress**: View your stats in the Dashboard
 4. **Export Regularly**: Backup your data using the Export function
+
+### Testing
+
+The application includes a comprehensive test suite to ensure reliability:
+
+```
+npm test
+```
+
+This runs unit tests for components, hooks, and utility functions using Jest and React Testing Library.
 
 ## Spaced Repetition Algorithm
 

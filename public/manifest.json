@@ -1,25 +1,55 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Smart Flashcards",
+  "name": "Smart Spaced Repetition Flashcards",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "flash card.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "flash card.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "flash card.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "flash card.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0ea5e9",
+  "background_color": "#f8fafc",
+  "orientation": "portrait",
+  "description": "Learn efficiently with smart flashcards that adapt to your learning pace",
+  "categories": ["education", "learning", "productivity"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "type": "image/png",
+      "sizes": "1080x1920"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Study Now",
+      "short_name": "Study",
+      "description": "Start reviewing your flashcards",
+      "url": "/study"
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your progress and manage cards",
+      "url": "/dashboard"
+    }
+  ]
 }

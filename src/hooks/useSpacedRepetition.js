@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * Custom hook to manage spaced repetition flashcards
@@ -15,64 +15,10 @@ export const useSpacedRepetition = (initialCards = []) => {
   });
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load data from localStorage on initial mount
-  useEffect(() => {
-    const savedData = localStorage.getItem("flashcard-data");
-
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setReviewData(parsedData);
-
-        // Initialize cards from saved data or use initial cards
-        if (parsedData.cards && parsedData.cards.length > 0) {
-          setCards(parsedData.cards);
-        } else if (initialCards.length > 0) {
-          // Initialize new cards with SRS metadata
-          const initializedCards = initialCards.map((card) => ({
-            ...card,
-            interval: 0, // Time interval in days
-            easeFactor: 2.5, // Ease factor (multiplier for intervals)
-            reviewCount: 0, // Number of times reviewed
-            lastReviewedAt: null, // Timestamp of last review
-            nextReviewAt: Date.now(), // Timestamp for next review
-            created: Date.now(), // Creation timestamp
-          }));
-
-          setCards(initializedCards);
-          setReviewData((prev) => ({
-            ...prev,
-            cards: initializedCards,
-          }));
-        }
-      } catch (error) {
-        console.error("Error loading flashcard data:", error);
-        initializeNewCards();
-      }
-    } else if (initialCards.length > 0) {
-      initializeNewCards();
-    }
-
-    setIsLoaded(true);
-  }, []);
-
-  // Save data to localStorage whenever it changes
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("flashcard-data", JSON.stringify(reviewData));
-    }
-  }, [reviewData, isLoaded]);
-
-  // Select next card for review
-  useEffect(() => {
-    if (cards.length > 0) {
-      selectNextCard();
-    } else {
-      setCurrentCard(null);
-    }
-  }, [cards]);
-
-  const initializeNewCards = () => {
+  /**
+   * Initialize new cards with SRS metadata
+   */
+  const initializeNewCards = useCallback(() => {
     // Initialize new cards with SRS metadata
     const initializedCards = initialCards.map((card) => ({
       ...card,
@@ -89,12 +35,11 @@ export const useSpacedRepetition = (initialCards = []) => {
       cards: initializedCards,
       reviews: [],
     });
-  };
+  }, [initialCards]);
 
   /**
    * Select the next card for review based on scheduling
-   */
-  const selectNextCard = () => {
+   */  const selectNextCard = useCallback(() => {
     const now = Date.now();
 
     // Sort cards by their nextReviewAt time
@@ -112,12 +57,48 @@ export const useSpacedRepetition = (initialCards = []) => {
 
     // Select the card with the earliest review time
     setCurrentCard(sortedCards[0] || null);
-  };
+  }, [cards]);
 
+  /**
+   * Update a card in the cards array
+   */
+  const updateCard = useCallback((updatedCard) => {
+    setCards((currentCards) => {
+      const updatedCards = currentCards.map((card) =>
+        card.id === updatedCard.id ? updatedCard : card
+      );
+
+      // Update reviewData after updating cards
+      setReviewData((prev) => ({
+        ...prev,
+        cards: updatedCards,
+      }));
+
+      return updatedCards;
+    });
+  }, []);
+
+  /**
+   * Add a review record
+   */
+  const addReview = useCallback((cardId, known) => {
+    const review = {
+      id: Math.random().toString(36).substring(2, 9),
+      cardId,
+      known,
+      timestamp: Date.now(),
+    };
+
+    setReviewData((prev) => ({
+      ...prev,
+      reviews: [...(prev.reviews || []), review],
+    }));
+  }, []);
+  
   /**
    * Mark the current card as known and reschedule it
    */
-  const markAsKnown = () => {
+  const markAsKnown = useCallback(() => {
     if (!currentCard) return;
 
     const now = Date.now();
@@ -151,12 +132,11 @@ export const useSpacedRepetition = (initialCards = []) => {
 
     // Select the next card
     selectNextCard();
-  };
-
+  }, [currentCard, updateCard, addReview, selectNextCard]);
   /**
    * Mark the current card as not known and reschedule it
    */
-  const markAsNotKnown = () => {
+  const markAsNotKnown = useCallback(() => {
     if (!currentCard) return;
 
     const now = Date.now();
@@ -182,41 +162,8 @@ export const useSpacedRepetition = (initialCards = []) => {
     addReview(updatedCard.id, false);
 
     // Select the next card
-    selectNextCard();
-  };
-
-  /**
-   * Update a card in the cards array
-   */
-  const updateCard = (updatedCard) => {
-    const updatedCards = cards.map((card) =>
-      card.id === updatedCard.id ? updatedCard : card
-    );
-
-    setCards(updatedCards);
-    setReviewData((prev) => ({
-      ...prev,
-      cards: updatedCards,
-    }));
-  };
-
-  /**
-   * Add a review record
-   */
-  const addReview = (cardId, known) => {
-    const review = {
-      id: Math.random().toString(36).substring(2, 9),
-      cardId,
-      known,
-      timestamp: Date.now(),
-    };
-
-    setReviewData((prev) => ({
-      ...prev,
-      reviews: [...(prev.reviews || []), review],
-    }));
-  };
-
+    selectNextCard();  }, [currentCard, updateCard, addReview, selectNextCard]);
+  
   /**
    * Add a new card to the deck
    */
@@ -314,18 +261,16 @@ export const useSpacedRepetition = (initialCards = []) => {
       return false;
     }
   };
-
   /**
    * Export all card data to JSON
    */
   const exportCards = () => {
     return reviewData;
   };
-
   /**
    * Get card due counts for different time periods
    */
-  const getDueCounts = () => {
+  const getDueCounts = useCallback(() => {
     const now = Date.now();
     const day = 24 * 60 * 60 * 1000;
 
@@ -349,7 +294,72 @@ export const useSpacedRepetition = (initialCards = []) => {
       dueThisWeek,
       total: cards.length,
     };
-  };
+  }, [cards]);
+
+  // Load data from localStorage on initial mount only
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadData = () => {
+      const savedData = localStorage.getItem("flashcard-data");
+
+      if (!isMounted) return;
+
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+
+          // Initialize cards from saved data or use initial cards
+          if (parsedData.cards && parsedData.cards.length > 0) {
+            setCards(parsedData.cards);
+            setReviewData(parsedData);
+          } else if (initialCards.length > 0) {
+            initializeNewCards();
+          }
+        } catch (error) {
+          console.error("Error loading flashcard data:", error);
+          if (initialCards.length > 0) {
+            initializeNewCards();
+          }
+        }
+      } else if (initialCards.length > 0) {
+        initializeNewCards();
+      }
+
+      if (isMounted) {
+        setIsLoaded(true);
+      }
+    };
+
+    loadData();
+
+    // Cleanup function to prevent setting state on unmounted component
+    return () => {
+      isMounted = false;
+    };
+    // This effect should only run once on mount, hence the empty dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);  
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    // Only save if we've finished loading initial data
+    // and we have a meaningful change to save
+    if (isLoaded && reviewData.cards && reviewData.cards.length > 0) {
+      // Use a ref to keep track of previous state to avoid unnecessary saves
+      const dataToSave = JSON.stringify(reviewData);
+      localStorage.setItem("flashcard-data", dataToSave);
+    }
+  }, [reviewData, isLoaded]);
+
+  // Select next card for review
+  useEffect(() => {
+    if (cards.length > 0) {
+      selectNextCard();
+    } else {
+      setCurrentCard(null);
+    }
+  }, [cards, selectNextCard]);
 
   return {
     cards,

@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
 
+/**
+ * ReviewButtons component displays buttons for rating flashcards during review
+ *
+ * @param {Object} props - Component props
+ * @param {Function} props.onKnow - Function to call when "Know" button is clicked
+ * @param {Function} props.onDontKnow - Function to call when "Don't Know" button is clicked
+ * @returns {JSX.Element} The ReviewButtons component
+ */
 const ReviewButtons = ({ onKnow, onDontKnow }) => {
   return (
-    <div className="flex justify-center gap-6 py-4 mt-4 w-full max-w-md mx-auto">
+    <div className="flex justify-center gap-6 py-4 mt-4 w-full max-w-md mx-auto review-buttons">
       <motion.button
         className="btn-secondary flex-1 flex items-center justify-center"
         onClick={onDontKnow}
@@ -12,6 +20,7 @@ const ReviewButtons = ({ onKnow, onDontKnow }) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
         aria-label="Don't know"
+        title="Mark as 'Don't Know' (ArrowLeft)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -37,6 +46,7 @@ const ReviewButtons = ({ onKnow, onDontKnow }) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
         aria-label="Know"
+        title="Mark as 'Know' (ArrowRight)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

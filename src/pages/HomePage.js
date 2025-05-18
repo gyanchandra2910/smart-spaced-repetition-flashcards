@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useSpacedRepetition from "../hooks/useSpacedRepetition";
@@ -5,7 +6,11 @@ import useSpacedRepetition from "../hooks/useSpacedRepetition";
 const HomePage = () => {
   const navigate = useNavigate();
   const { getDueCounts } = useSpacedRepetition();
-  const { dueNow, total } = getDueCounts();
+  const [dueCounts, setDueCounts] = useState({ dueNow: 0, total: 0 });
+  
+  useEffect(() => {
+    setDueCounts(getDueCounts());
+  }, [getDueCounts]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
@@ -106,15 +111,14 @@ const HomePage = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.6 }}
         className="w-full max-w-xl card-glass p-8 text-center mb-8"
-      >
-        <h2 className="text-2xl font-bold mb-6">Ready to start learning?</h2>
+      >        <h2 className="text-2xl font-bold mb-6">Ready to start learning?</h2>
 
-        {total > 0 ? (
+        {dueCounts.total > 0 ? (
           <div>
             <p className="mb-4 text-lg">
               You have{" "}
               <span className="font-bold text-primary-600 dark:text-primary-400">
-                {dueNow} cards
+                {dueCounts.dueNow} cards
               </span>{" "}
               due for review right now.
             </p>

@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Flashcard from "../components/Flashcard";
 import ReviewButtons from "../components/ReviewButtons";
+import EmptyState from "../components/EmptyState";
+import SuccessMessage from "../components/SuccessMessage";
+import ShortcutNotification from "../components/ShortcutNotification";
 import useSpacedRepetition from "../hooks/useSpacedRepetition";
 
 const motivationalQuotes = [
@@ -42,23 +45,65 @@ const StudyPage = () => {
         },
       ]
     );
-
   const [dueCounts, setDueCounts] = useState({ dueNow: 0, total: 0 });
   const [quote, setQuote] = useState("");
+  const [isSessionComplete, setIsSessionComplete] = useState(false);
+  const [shortcutMessage, setShortcutMessage] = useState("");
 
+  const handleKnow = useCallback(() => {
+    if (dueCounts.dueNow === 1) {
+      // This is the last card, show success message
+      setIsSessionComplete(true);
+    }
+    markAsKnown();
+  }, [dueCounts.dueNow, markAsKnown, setIsSessionComplete]);
+
+  const handleDontKnow = useCallback(() => {
+    if (dueCounts.dueNow === 1) {
+      // This is the last card, show success message
+      setIsSessionComplete(true);
+    }
+    markAsNotKnown();
+  }, [dueCounts.dueNow, markAsNotKnown, setIsSessionComplete]);
+
+  const handleKeyboardShortcut = useCallback(
+    (action) => {
+      if (action === "know") {
+        setShortcutMessage("Marked as known (Right Arrow)");
+        handleKnow();
+      } else if (action === "dontKnow") {
+        setShortcutMessage("Marked as not known (Left Arrow)");
+        handleDontKnow();
+      } else if (action === "flip") {
+        setShortcutMessage("Card flipped (Space or Enter)");
+      }
+    },
+    [handleKnow, handleDontKnow]
+  );
+  useEffect(() => {
+    // Register global handler for keyboard shortcut notifications
+    window.notifyKeyboardShortcut = handleKeyboardShortcut;
+
+    return () => {
+      // Clean up
+      window.notifyKeyboardShortcut = null;
+    };
+  }, [handleKeyboardShortcut]);
+
+  // Separate effect to handle due counts
   useEffect(() => {
     setDueCounts(getDueCounts());
+  }, [getDueCounts]);
+
+  // Set random quote only once on component mount
+  useEffect(() => {
     setQuote(
       motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]
     );
-  }, [currentCard]);
+  }, []);
 
-  const handleKnow = () => {
-    markAsKnown();
-  };
-
-  const handleDontKnow = () => {
-    markAsNotKnown();
+  const resetSession = () => {
+    setIsSessionComplete(false);
   };
 
   return (
@@ -74,8 +119,7 @@ const StudyPage = () => {
               ? `Card ${dueCounts.dueNow} of ${dueCounts.total} due now`
               : `No cards due for review! Total cards: ${dueCounts.total}`}
           </p>
-        </div>
-
+        </div>{" "}
         <AnimatePresence mode="wait">
           {currentCard ? (
             <motion.div
@@ -94,6 +138,20 @@ const StudyPage = () => {
 
               <ReviewButtons onKnow={handleKnow} onDontKnow={handleDontKnow} />
             </motion.div>
+          ) : isSessionComplete ? (
+            <SuccessMessage
+              title="Great Job!"
+              message="You've completed your review session for now. Your progress has been saved."
+              onContinue={resetSession}
+            />
+          ) : dueCounts.total === 0 ? (
+            <EmptyState
+              title="No Flashcards Found"
+              message="You don't have any flashcards yet. Create your first card to start learning!"
+              actionText="Create Cards"
+              actionLink="/dashboard"
+              type="empty"
+            />
           ) : (
             <motion.div
               initial={{ opacity: 0 }}
@@ -149,6 +207,12 @@ const StudyPage = () => {
           )}
         </AnimatePresence>
       </div>
+
+      <ShortcutNotification
+        message={shortcutMessage}
+        show={!!shortcutMessage}
+        onClose={() => setShortcutMessage("")}
+      />
     </div>
   );
 };

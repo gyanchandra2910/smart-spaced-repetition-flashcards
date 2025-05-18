@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
+import useOnboardingTour from "../hooks/useOnboardingTour";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { resetTour } = useOnboardingTour();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -60,8 +62,8 @@ const Layout = () => {
               to="/dashboard"
               className={({ isActive }) =>
                 isActive
-                  ? "font-medium text-primary-600 dark:text-primary-400"
-                  : "text-secondary-600 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  ? "font-medium text-primary-600 dark:text-primary-400 nav-dashboard-link"
+                  : "text-secondary-600 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors nav-dashboard-link"
               }
             >
               Dashboard
@@ -150,8 +152,8 @@ const Layout = () => {
                   to="/dashboard"
                   className={({ isActive }) =>
                     isActive
-                      ? "font-medium text-primary-600 dark:text-primary-400 py-1"
-                      : "text-secondary-600 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1"
+                      ? "font-medium text-primary-600 dark:text-primary-400 py-1 nav-dashboard-link"
+                      : "text-secondary-600 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1 nav-dashboard-link"
                   }
                   onClick={closeMobileMenu}
                 >
@@ -177,6 +179,13 @@ const Layout = () => {
           <p className="mt-1">
             Built with React, Tailwind CSS, and Framer Motion.
           </p>
+          <button
+            onClick={resetTour}
+            className="mt-2 text-primary-500 dark:text-primary-400 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 rounded"
+            aria-label="Restart onboarding tour"
+          >
+            Restart Tour
+          </button>
         </div>
       </footer>
     </div>

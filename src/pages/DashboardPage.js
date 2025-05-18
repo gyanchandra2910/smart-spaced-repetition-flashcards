@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import StatsDashboard from "../components/StatsDashboard";
 import CalendarHeatmap from "../components/CalendarHeatmap";
 import useSpacedRepetition from "../hooks/useSpacedRepetition";
+import {
+  validateImportedData,
+  prepareDataForExport,
+} from "../utils/dataValidation";
 
 const DashboardPage = () => {
   const { cards, reviewData, addCard, removeCard, importCards, exportCards } =
@@ -10,6 +14,7 @@ const DashboardPage = () => {
   const [newCard, setNewCard] = useState({ question: "", answer: "" });
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [importError, setImportError] = useState("");
+  const [importWarnings, setImportWarnings] = useState([]);
   const [selectedTab, setSelectedTab] = useState("stats");
 
   const handleNewCardChange = (e) => {
@@ -31,9 +36,10 @@ const DashboardPage = () => {
       removeCard(cardId);
     }
   };
-
   const handleExport = () => {
-    const dataStr = JSON.stringify(exportCards(), null, 2);
+    const rawData = exportCards();
+    const preparedData = prepareDataForExport(rawData);
+    const dataStr = JSON.stringify(preparedData, null, 2);
     const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(
       dataStr
     )}`;
@@ -47,25 +53,46 @@ const DashboardPage = () => {
     linkElement.setAttribute("download", exportFileDefaultName);
     linkElement.click();
   };
-
   const handleImport = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Reset previous errors and warnings
+    setImportError("");
+    setImportWarnings([]);
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target.result);
-        const success = importCards(data);
+
+        // Validate the imported data
+        const validationResult = validateImportedData(data);
+
+        if (!validationResult.isValid) {
+          setImportError(validationResult.errors.join("\n"));
+          return;
+        }
+
+        // Set any warnings that were found during validation
+        if (validationResult.warnings.length > 0) {
+          setImportWarnings(validationResult.warnings);
+        }
+
+        // Import the cards
+        const success = importCards(validationResult);
 
         if (success) {
-          setImportError("");
-          alert("Cards imported successfully!");
+          alert(
+            `Cards imported successfully! ${
+              validationResult.warnings.length > 0 ? "See warnings below." : ""
+            }`
+          );
         } else {
-          setImportError("Failed to import cards. Invalid format.");
+          setImportError("Failed to import cards. Please try again.");
         }
       } catch (error) {
-        setImportError("Failed to parse JSON file.");
+        setImportError(`Failed to parse JSON file: ${error.message}`);
       }
     };
 
@@ -87,6 +114,7 @@ const DashboardPage = () => {
         {/* Tab Navigation */}
         <div className="border-b border-secondary-200 dark:border-secondary-700 mb-8">
           <div className="flex space-x-8">
+            {" "}
             <button
               className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                 selectedTab === "stats"
@@ -94,6 +122,9 @@ const DashboardPage = () => {
                   : "border-transparent text-secondary-500 hover:text-secondary-700 dark:hover:text-secondary-300"
               }`}
               onClick={() => setSelectedTab("stats")}
+              aria-selected={selectedTab === "stats"}
+              aria-label="Show statistics tab"
+              role="tab"
             >
               Statistics
             </button>
@@ -104,6 +135,9 @@ const DashboardPage = () => {
                   : "border-transparent text-secondary-500 hover:text-secondary-700 dark:hover:text-secondary-300"
               }`}
               onClick={() => setSelectedTab("manage")}
+              aria-selected={selectedTab === "manage"}
+              aria-label="Show manage cards tab"
+              role="tab"
             >
               Manage Cards
             </button>
@@ -114,6 +148,9 @@ const DashboardPage = () => {
                   : "border-transparent text-secondary-500 hover:text-secondary-700 dark:hover:text-secondary-300"
               }`}
               onClick={() => setSelectedTab("import")}
+              aria-selected={selectedTab === "import"}
+              aria-label="Show import and export tab"
+              role="tab"
             >
               Import/Export
             </button>
@@ -265,7 +302,6 @@ const DashboardPage = () => {
                   Import flashcards from a JSON file. This will add the imported
                   cards to your existing deck.
                 </p>
-
                 <div className="flex items-center justify-center w-full">
                   <label className="w-full flex flex-col items-center px-4 py-6 bg-white dark:bg-secondary-800 text-primary rounded-lg shadow-lg tracking-wide border border-primary-200 dark:border-primary-700 cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-900">
                     <svg
@@ -286,11 +322,23 @@ const DashboardPage = () => {
                       onChange={handleImport}
                     />
                   </label>
-                </div>
-
+                </div>{" "}
                 {importError && (
                   <div className="mt-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
-                    {importError}
+                    <p className="font-medium mb-1">Error:</p>
+                    <p className="whitespace-pre-line">{importError}</p>
+                  </div>
+                )}
+                {importWarnings.length > 0 && (
+                  <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg">
+                    <p className="font-medium mb-1">Warnings:</p>
+                    <ul className="list-disc list-inside">
+                      {importWarnings.map((warning, index) => (
+                        <li key={index} className="mt-1">
+                          {warning}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>

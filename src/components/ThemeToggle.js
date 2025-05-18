@@ -30,10 +30,9 @@ const ThemeToggle = () => {
       localStorage.setItem("theme", "dark");
     }
   };
-
   return (
     <motion.button
-      className="fixed top-4 right-4 p-2 rounded-full bg-secondary-200 dark:bg-secondary-700 text-secondary-800 dark:text-secondary-100"
+      className="fixed top-4 right-4 p-2 rounded-full bg-secondary-200 dark:bg-secondary-700 text-secondary-800 dark:text-secondary-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-75"
       onClick={toggleTheme}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
