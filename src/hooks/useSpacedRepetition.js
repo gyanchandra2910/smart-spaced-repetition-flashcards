@@ -39,7 +39,7 @@ export const useSpacedRepetition = (initialCards = []) => {
 
   /**
    * Select the next card for review based on scheduling
-   */  const selectNextCard = useCallback(() => {
+   */ const selectNextCard = useCallback(() => {
     const now = Date.now();
 
     // Sort cards by their nextReviewAt time
@@ -94,7 +94,7 @@ export const useSpacedRepetition = (initialCards = []) => {
       reviews: [...(prev.reviews || []), review],
     }));
   }, []);
-  
+
   /**
    * Mark the current card as known and reschedule it
    */
@@ -162,8 +162,9 @@ export const useSpacedRepetition = (initialCards = []) => {
     addReview(updatedCard.id, false);
 
     // Select the next card
-    selectNextCard();  }, [currentCard, updateCard, addReview, selectNextCard]);
-  
+    selectNextCard();
+  }, [currentCard, updateCard, addReview, selectNextCard]);
+
   /**
    * Add a new card to the deck
    */
@@ -339,7 +340,7 @@ export const useSpacedRepetition = (initialCards = []) => {
     };
     // This effect should only run once on mount, hence the empty dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);  
+  }, []);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {

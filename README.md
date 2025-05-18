@@ -2,13 +2,17 @@
 
 A beautiful, responsive web application for learning with flashcards using spaced repetition techniques.
 
+🔗 **[Try it now!](https://gyanchandra2910.github.io/smart-spaced-repetition-flashcards/)**
+
+![Flashcards App](public/flash%20card.png)
+
 ## Features
 
 ### Flashcard Experience
 
 - **Interactive Flashcards**: Flip cards with 3D animations to reveal answers
 - **Mobile Gestures**: Swipe left/right on mobile to mark cards as known/unknown
-- **Keyboard Navigation**: Use keyboard shortcuts for accessibility
+- **Keyboard Navigation**: Use keyboard shortcuts (Space to flip, ← → arrows to mark)
 - **Micro-Interactions**: Delightful animations enhance the learning experience
 
 ### Spaced Repetition System
@@ -52,25 +56,24 @@ A beautiful, responsive web application for learning with flashcards using space
 
 ## Getting Started
 
-### Installation
+### Quick Start (Using the Web App)
+1. Visit [https://gyanchandra2910.github.io/smart-spaced-repetition-flashcards/](https://gyanchandra2910.github.io/smart-spaced-repetition-flashcards/)
+2. Create your first flashcard by clicking "Add Card"
+3. Start studying with the "Study" button
+4. Mark cards as "Known" or "Don't Know" to optimize your learning schedule
+
+### Keyboard Shortcuts
+- `Space` or `Enter`: Flip card
+- `→` Arrow Right: Mark as known
+- `←` Arrow Left: Mark as unknown
+
+### Installation (For Developers)
 
 1. Clone the repository
 
-   ```
-   git clone https://github.com/yourusername/smart-spaced-repetition-flashcards.git
-   ```
-
 2. Install dependencies
 
-   ```
-   npm install
-   ```
-
 3. Start the development server
-
-   ```
-   npm start
-   ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
@@ -85,10 +88,6 @@ A beautiful, responsive web application for learning with flashcards using space
 
 The application includes a comprehensive test suite to ensure reliability:
 
-```
-npm test
-```
-
 This runs unit tests for components, hooks, and utility functions using Jest and React Testing Library.
 
 ## Spaced Repetition Algorithm
@@ -99,6 +98,14 @@ The app uses a modified version of the SM-2 algorithm, similar to what's used in
 2. If you know a card, its interval increases by its ease factor
 3. If you don't know a card, it's reset to be reviewed again soon
 4. The ease factor increases slightly for correct answers and decreases for incorrect ones
+
+## Progressive Web App (PWA)
+
+This application can be installed on your device as a PWA:
+
+1. Visit the app in Chrome, Edge, or other modern browsers
+2. Look for the install icon in your address bar
+3. Click "Install" to add it to your home screen
 
 ## Available Scripts
 
@@ -117,6 +124,10 @@ Launches the test runner in the interactive watch mode.
 
 Builds the app for production to the `build` folder.
 
+### `npm run deploy`
+
+Deploys the application to GitHub Pages.
+
 ## License
 
 MIT License - feel free to use and modify this project for your own purposes.
@@ -129,4 +140,4 @@ MIT License - feel free to use and modify this project for your own purposes.
 
 ---
 
-Made with ❤️ for effective learning
+[View Live Demo](https://gyanchandra2910.github.io/smart-spaced-repetition-flashcards/) | [Report an Issue](https://github.com/gyanchandra2910/smart-spaced-repetition-flashcards/issues) | Made with ❤️ for effective learning

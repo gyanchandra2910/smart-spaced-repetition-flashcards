@@ -7,7 +7,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { getDueCounts } = useSpacedRepetition();
   const [dueCounts, setDueCounts] = useState({ dueNow: 0, total: 0 });
-  
+
   useEffect(() => {
     setDueCounts(getDueCounts());
   }, [getDueCounts]);
@@ -111,8 +111,9 @@ const HomePage = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.6 }}
         className="w-full max-w-xl card-glass p-8 text-center mb-8"
-      >        <h2 className="text-2xl font-bold mb-6">Ready to start learning?</h2>
-
+      >
+        {" "}
+        <h2 className="text-2xl font-bold mb-6">Ready to start learning?</h2>
         {dueCounts.total > 0 ? (
           <div>
             <p className="mb-4 text-lg">
