@@ -1,0 +1,69 @@
+/* Custom animations and styles that complement Tailwind */
+
+/* Preserve 3D for card flipping */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glassmorphism backdrop blur for Safari */
+@supports (-webkit-backdrop-filter: none) {
+  .card-glass {
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Placeholder animation */
+@keyframes placeholder-shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.animated-bg {
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeholder-shimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(to right, #f6f6f6 8%, #f0f0f0 18%, #f6f6f6 33%);
+  background-size: 800px 104px;
+}
+
+.dark .animated-bg {
+  background: linear-gradient(to right, #2a2a2a 8%, #222 18%, #2a2a2a 33%);
+}
