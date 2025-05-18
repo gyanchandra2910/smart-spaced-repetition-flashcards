@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/smart-spaced-repetition-flashcards/static/css/main.f3f4b764.css",
+    "main.js": "/smart-spaced-repetition-flashcards/static/js/main.48076829.js",
+    "static/js/453.39d61f8b.chunk.js": "/smart-spaced-repetition-flashcards/static/js/453.39d61f8b.chunk.js",
+    "index.html": "/smart-spaced-repetition-flashcards/index.html",
+    "main.f3f4b764.css.map": "/smart-spaced-repetition-flashcards/static/css/main.f3f4b764.css.map",
+    "main.48076829.js.map": "/smart-spaced-repetition-flashcards/static/js/main.48076829.js.map",
+    "453.39d61f8b.chunk.js.map": "/smart-spaced-repetition-flashcards/static/js/453.39d61f8b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f3f4b764.css",
+    "static/js/main.48076829.js"
+  ]
+}
